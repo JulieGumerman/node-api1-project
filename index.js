@@ -25,16 +25,22 @@ server.get("/data", (req, res) => {
 server.get("/data/:id", (req, res) => {
     const id = req.params.id;
     const addData = req.body;
-    if ( addData.id ) {
+    // if ( addData.id ) {
+    //     dataModel.findById(id)
+    //         .then(data => {res.send(data)})
+    //         .catch(err => {res.status(500).send(`{error: "The hobbit's info could not be retrieved"}`)})
+    // } else {
+    //     res.status(404).send({error: "The specified hobbit does not exist."});
+    // }
+
+    if ( id ) {
         dataModel.findById(id)
             .then(data => {res.send(data)})
-            .catch(err => {res.status(500).send(`{error: "The hobbit's info could not be retrieved"}`)})
-    } else {
-        res.status(404).send({error: "The specified hobbit does not exist."});
+            .catch(err => {res.status(500).send(`{error: "The hobbit's info could not be retrieved"}`)})        
+    } else if (!addData.id) {
+        res.status(404).send({error: "The specified hobbit does not exist."});        
     }
-    // dataModel.findById(id)
-    //     .then(data => {res.send(data)})
-    //     .catch(err => {res.status(500).send(`{error: "The hobbit's info could not be retrieved"}`)})
+
 }) 
 
 server.post("/data", (req, res) => {
@@ -58,23 +64,29 @@ server.post("/data", (req, res) => {
 server.put("/data/:id", (req, res) => {
     const id = req.params.id;
     const changes = req.body;
-    if (changes.id) {
+    if (!id) {
+         res.status(404).json({error: "Hobbit does not exist."})       
+        // dataModel.update(id, changes)
+        // .then(hobbit => {
+        //     res.status(200).json(hobbit);
+        //     console.log(hobbit);
+        // })
+        // .catch(err => res.status(500).json({error: "Hobbit information could not be modified"}));
+    } else {
+        // res.status(404).json({error: "Hobbit does not exist."})
         dataModel.update(id, changes)
         .then(hobbit => {
-            res.status(200).json(hobbit);
+            res.status(201).json(hobbit);
             console.log(hobbit);
         })
         .catch(err => res.status(500).json({error: "Hobbit information could not be modified"}));
-    } else (
-        res.status(404).json({error: "Hobbit does not exist."})
-    )
+    }
     // dataModel.update(id, changes)
     //     .then(hobbit => {
     //         res.status(200).json(hobbit);
     //         console.log(hobbit);
     //     })
     //     .catch(err => res.status(500).json({error: "Hobbit information could not be modified"}));
-
 })
 
 
