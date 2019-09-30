@@ -29,6 +29,14 @@ server.get("/data/:id", (req, res) => {
         .catch(err => {res.send(err)})
 }) 
 
+server.post("/data", (req, res) => {
+    const addData = req.body;
+    dataModel.insert(addData)
+        .then(data => res.json(data))
+        .catch(err => res.json(err))
+    
+})
+
 
 
 const port = 8000;
