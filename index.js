@@ -77,7 +77,6 @@ server.put("/data/:id", (req, res) => {
         dataModel.update(id, changes)
         .then(hobbit => {
             res.status(201).json(hobbit);
-            console.log(hobbit);
         })
         .catch(err => res.status(500).json({error: "Hobbit information could not be modified"}));
     }
