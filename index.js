@@ -17,23 +17,40 @@ server.get("/", (req, res) => {
 server.get("/data", (req, res) => {
     dataModel.find()
         .then(data => {res.send(data)})
-        .catch(err => {res.send(err)})
+        .catch(err => {res.status(500).send({error: "The hobbits are at a party and cannot be retrieved."})})
 })
 
 
 
 server.get("/data/:id", (req, res) => {
     const id = req.params.id;
-    dataModel.findById(id)
-        .then(data => {res.send(data)})
-        .catch(err => {res.status(500).send(`{error: "The hobbit's info could not be retrieved"}`)})
+    const addData = req.body;
+    if ( addData.id ) {
+        dataModel.findById(id)
+            .then(data => {res.send(data)})
+            .catch(err => {res.status(500).send(`{error: "The hobbit's info could not be retrieved"}`)})
+    } else {
+        res.status(404).send({error: "The specified hobbit does not exist."});
+    }
+    // dataModel.findById(id)
+    //     .then(data => {res.send(data)})
+    //     .catch(err => {res.status(500).send(`{error: "The hobbit's info could not be retrieved"}`)})
 }) 
 
 server.post("/data", (req, res) => {
     const addData = req.body;
-    dataModel.insert(addData)
-        .then(data => res.status(201).json(data))
-        .catch(err => res.status(400).json(`{errorMessage: "Please provide name and bio for the hobbit."}`))
+    
+    if (!addData.name || !addData.bio) {
+        res.status(400).json({errorMessage: "Please provide name and bio for the hobbit."})}
+    else {
+        dataModel.insert(addData)
+        .then(data => {
+            if (!addData.name || !addData.bio) {
+                res.status(400).json({errorMessage: "Please provide name and bio for the hobbit."})
+            } else (res.status(201).json(data))
+            })
+        .catch(err => res.status(500).json({error: "There was an error while saving the hobbit to the database."}))
+    }
     
 })
 
@@ -43,10 +60,10 @@ server.put("/data/:id", (req, res) => {
     const changes = req.body;
     dataModel.update(id, changes)
         .then(hobbit => {
-            res.json(hobbit);
+            res.status(200).json(hobbit);
             console.log(hobbit);
         })
-        .catch(err => res.json(err));
+        .catch(err => res.status(500).json({error: "Hobbit information could not be modified"}));
 })
 
 
@@ -55,7 +72,7 @@ server.delete("/data/:id", (req, res) => {
     const id = req.params.id;
     dataModel.remove(id)
         .then(hobbit => {res.json(hobbit)})
-        .catch(err => {res.json(err)})
+        .catch(err => {res.status(500).json({message: "The hobbit could not be removed"})})
 })
 
 const port = 8000;
