@@ -3,10 +3,12 @@
 const express = require("express");
 
 const  dataModel = require("./data/db.js");
+const cors = require("cors");
 
 const server = express();
 
 server.use(express.json());
+server.use(cors());
 
 ///res/req functions go here!!!
 
