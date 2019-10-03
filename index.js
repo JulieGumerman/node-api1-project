@@ -99,6 +99,6 @@ server.delete("/data/:id", (req, res) => {
         .catch(err => {res.status(500).json({message: "The hobbit could not be removed"})})
 })
 
-const port = 8000;
+const port = process.env.PORT || 8000;
 
 server.listen(port, () => console.log("Server up!!!"));
